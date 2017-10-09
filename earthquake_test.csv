@@ -1,0 +1,8 @@
+time,latitude,longitude,depth,mag,magType,nst,gap,dmin,rms,net,id,updated,place,type,horizontalError,depthError,magError,magNst,status,locationSource,magSource
+2017-09-27T05:56:22.872Z,62.1422,-150.2671,17.5,1.3,ml,,,,0.72,ak,ak16917874,2017-09-27T06:04:36.600Z,"21km W of Y, Alaska",earthquake,,0.3,,,automatic,ak,ak
+2017-09-27T05:54:50.834Z,67.4502,-148.3677,0,2.3,ml,,,,0.79,ak,ak16917871,2017-09-27T05:59:23.089Z,"81km ENE of Coldfoot, Alaska",earthquake,,0.2,,,automatic,ak,ak
+2017-09-27T05:52:00.240Z,34.003,-116.2785,8.11,0.8,ml,22,70,0.1137,0.18,ci,ci38011816,2017-09-27T05:55:36.762Z,"15km SSE of Joshua Tree, CA",earthquake,0.35,1.12,0.167,13,automatic,ci,ci
+2017-09-27T05:51:40.756Z,62.195,-150.2995,2.5,2.4,ml,,,,0.8,ak,ak16917866,2017-09-27T05:56:00.165Z,"17km SW of Talkeetna, Alaska",earthquake,,0.3,,,automatic,ak,ak
+2017-09-27T05:32:47.750Z,38.251,-119.1473,16.4,1.3,ml,9,76.14,0.218,,nn,nn00607189,2017-09-27T05:34:05.295Z,"7km E of Bridgeport, California",earthquake,,,,,automatic,nn,nn
+2017-09-27T05:30:30.770Z,34.4198333,-119.3838333,4.93,2.25,ml,27,80,0.07396,0.31,ci,ci38011800,2017-09-27T05:48:35.068Z,"13km E of Carpinteria, CA",earthquake,0.51,1.45,0.15,26,automatic,ci,ci
+2017-09-27T05:30:29.880Z,33.263,-116.2966667,10.07,1.19,ml,41,66,0.07872,0.24,ci,ci38011808,2017-09-27T05:34:12.504Z,"7km E of Borrego Springs, CA",earthquake,0.32,0.69,0.145,27,automatic,ci,ci

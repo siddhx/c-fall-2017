@@ -71,7 +71,8 @@ int main(){
 		char *latitude1;
 		char *latitude2;
 		char temp1[1024];
-		char temp2[1024];	
+		char temp2[1024];
+		char temp3[1024];			
 			
 		strcpy(temp1, strData[i]);
 		
@@ -85,30 +86,50 @@ int main(){
 		for (int i = 1; i < 2; ++i)
 			latitude1 = strtok (NULL, ",");
 
-		printf ("latitude 1 is %s\n",latitude1);
+		// printf ("latitude 1 is %s\n",latitude1);
 
 		latitude2 = strtok (temp2,",");
 		
 		for (int i = 1; i < 2; ++i)
 			latitude2 = strtok (NULL, ",");
 
-		printf ("latitude 2 is %s\n",latitude2);		
-
+		// printf ("latitude 2 is %s\n",latitude2);		
         // for(j = 0; j < ( noOfLines - i - 1); ++j) {
 
     		if(latitude2 != NULL){        
-	            if(strcmp(latitude1, latitude2) > 0) {
 
+	            if(strcmp(latitude1, latitude2) > 0) {
 	            	if(i < (noOfLines)){
-		            	char swap;
-		            	swap = temp1;
-		            	// strData[i] = temp2;
-		            	// strData[i+1] = swap;
-		                // strcpy(swap, temp1);
-		                // strcpy(strData[i], temp2);
-		                // strcpy(strData[i+1], swap);
+		            	char *swap[1024];
+
+						strcpy(swap, strData[i]);
+						strcpy(temp3,strData[i+1]);		        
+
+						// printf ("latitude 2 is %s\n",temp3);						
+
+		            	// //strcpy copies the stirng pointed to by the pointer in second argument
+		                // strcpy(swap, temp);
+		                strcpy(*(strData+i), temp3);
+		            	// int index = i+1;
+		                if(i<(noOfLines-1)){
+		                	strcpy(*(strData+(i+1)), swap);		                
+							printf ("latitude 2 is %s\n",*(strData+i+1));
+		                }
 		            }
 	            }
+
+	     //        if(strcmp(latitude1, latitude2) < 0) {
+	     //        	if(i < (noOfLines)){
+		    //         	char *swap;
+		    //         	swap = temp1;
+		    //         	int index = i+1;
+		    //         	//strcpy copies the stirng pointed to by the pointer in second argument
+		    //             strcpy(swap, temp1);
+						// // printf ("latitude 2 is %s\n",*(strData+i));
+		    //             strcpy(*(strData+i), temp2);
+		    //             // strcpy(*(strData+index), swap);		                
+		    //         }
+	     //        }	            
 	        }
         // }
     }

@@ -94,28 +94,20 @@ int main(){
 			latitude2 = strtok (NULL, ",");
 
 		// printf ("latitude 2 is %s\n",latitude2);		
-        // for(j = 0; j < ( noOfLines - i - 1); ++j) {
+        for(j = 1; j < ( noOfLines - 1); ++j) {
 
     		if(latitude2 != NULL){        
 
 	            if(strcmp(latitude1, latitude2) > 0) {
-	            	if(i < (noOfLines)){
 		            	char *swap[1024];
 
-						strcpy(swap, strData[i]);
-						strcpy(temp3,strData[i+1]);		        
+						strcpy(swap, strData[j]);
+						strcpy(temp3,strData[j+1]);		        
 
-						// printf ("latitude 2 is %s\n",temp3);						
+		                strcpy(*(strData+j), temp3);
 
-		            	// //strcpy copies the stirng pointed to by the pointer in second argument
-		                // strcpy(swap, temp);
-		                strcpy(*(strData+i), temp3);
-		            	// int index = i+1;
-		                if(i<(noOfLines-1)){
-		                	strcpy(*(strData+(i+1)), swap);		                
-							printf ("latitude 2 is %s\n",*(strData+i+1));
-		                }
-		            }
+		                	strcpy(*(strData+(j+1)), swap);		                
+							// printf ("contents in current row being processed: %s\n",*(strData+j+1));
 	            }
 
 	     //        if(strcmp(latitude1, latitude2) < 0) {
@@ -131,7 +123,7 @@ int main(){
 		    //         }
 	     //        }	            
 	        }
-        // }
+        }
     }
 
     // Write it to outfile. file.

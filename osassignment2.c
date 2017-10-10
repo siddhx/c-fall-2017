@@ -28,7 +28,7 @@ int main(){
 	// int x;
     // char *strFileName = "./earthquake.csv";
     char *strFileName = "./earthquake_test.csv";    
-    char *strFileSummary = "./earthquake_out.csv";
+    char *strFileSummary = "./earthquake_out_small.csv";
     char strTempData[MAX_LEN]; 
 	char **strData = NULL; // String List
 	    

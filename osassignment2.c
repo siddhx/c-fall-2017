@@ -6,6 +6,7 @@ CSE 3320-001 Operating Systems
 
 /*References: 
 	1. https://stackoverflow.com/questions/28536150/how-to-sort-data-inside-txt-files-in-c
+	2. https://stackoverflow.com/questions/12733105/c-function-that-counts-lines-in-file
 */
 
 // write a program to implement bubble or insertion sort 
@@ -19,144 +20,272 @@ CSE 3320-001 Operating Systems
 // merge sort these smaller chunks and get the final sorted file
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #define MAX_LEN 300 // Length of each line in input file.
 
-
-int main(){
-	// int x;
-    // char *strFileName = "./earthquake.csv";
-    char *strFileName = "./earthquake_test.csv";    
-    char *strFileSummary = "./earthquake_out_small.csv";
+struct File
+{
+    char *strFileName;    
+    char *strFileSummary;
     char strTempData[MAX_LEN]; 
-	char **strData = NULL; // String List
-	    
-    int i, j;
-    int noOfLines = 0;
+	char **strData; // String List	
 
-    FILE * ptrFileLog = NULL;
-    FILE * ptrSummary = NULL;
+    int noOfLines;
 
-    //check for usual errors
-    if ( (ptrFileLog = fopen(strFileName, "r")) == NULL ) {
-        fprintf(stderr,"Error: Could not open %s\n",strFileName);
-        return 1;
-    }
-    if ( (ptrSummary = fopen(strFileSummary, "a")) == NULL ) {
-        fprintf(stderr,"Error: Could not open %s\n",strFileSummary);
-        return 1;
-    }    	
-	ptrFileLog = fopen(strFileName, "r");
+    FILE * ptrFileLog;
+    FILE * ptrSummary;
 
-    // Read and store in a string list.
-    while(fgets(strTempData, MAX_LEN, ptrFileLog) != NULL) {
-	    
+	char *latitude1;
+	char *latitude2;
+	char strDataCopy[1024];
+	char strDataPlus1[1024];
+	// char **temp3;			    
+};
+
+struct File *File_create(char *strFileName, char *strFileSummary)
+{
+	struct File *earthquake = malloc(sizeof(struct File));
+
+	earthquake->strFileName = strdup(strFileName);
+	earthquake->strFileSummary = strdup(strFileSummary);
+	earthquake->strData 	= NULL;
+	// earthquake->strTempData[] = ;
+    earthquake->ptrFileLog = NULL;
+    earthquake->ptrSummary = NULL;
+
+	// char **temp3[1024];
+
+    earthquake->noOfLines = 0;	
+
+	return earthquake;
+
+}
+
+void File_destory(struct File *earthquake)
+{
+	assert(earthquake != NULL);
+
+	// free(who->name);
+	free(earthquake);
+}
+
+void Error_print(char * variableName)
+{
+	fprintf(stderr,"Error: Could not open %s\n",variableName);	
+}
+
+int countlines(char *filename)
+{
+  // count the number of lines in the file called filename 
+	FILE *fp = fopen(filename,"r");
+	int ch=0;
+	int lines=0;
+	// printf("variable value : %c \n", filename);
+
+	if (fp == NULL)
+		return 0;
+
+	lines++;
+	while ((ch = fgetc(fp)) != EOF)
+	{
+	    if (ch == '\n')
+		lines++;
+	}
+	fclose(fp);
+	return lines;
+}
+
+void Store_temp_data(struct File *earthquake)
+{
+    int count;
+
+	// printf("variable value : %s \n", earthquake->strFileName);
+
+    count = countlines(earthquake->strFileName);
+	// for (int i = 0; i < count; ++i)
+	// {
+    while((fgets(earthquake->strTempData, MAX_LEN, earthquake->ptrFileLog) != NULL) && earthquake->noOfLines < count) 
+    {	 
 	    // Remove the trailing newline character
 
-        if(strchr(strTempData,'\n'))
-            strTempData[strlen(strTempData)-1] = '\0';
-        strData = (char**)realloc(strData, sizeof(char**)*(noOfLines+1));
-        strData[noOfLines] = (char*)calloc(MAX_LEN,sizeof(char));
-        strcpy(strData[noOfLines], strTempData);
-        noOfLines++;
-    }
+        if(strchr(earthquake->strTempData,'\n'))
+            earthquake->strTempData[strlen(earthquake->strTempData)-1] = '\0';
 
-    // Sort the array.
-    for(i= 1; i < (noOfLines); ++i) {
+        earthquake->strData = (char**) realloc(earthquake->strData, sizeof(char**)*(earthquake->noOfLines+1));
+        // earthquake->strData = malloc(sizeof(char**)*(earthquake->noOfLines+1));
         
-    	// printf("%s\n", strData[i]);
+        earthquake->strData[earthquake->noOfLines] = (char*)calloc(MAX_LEN,sizeof(char));
+        
+        memcpy(earthquake->strData[earthquake->noOfLines], earthquake->strTempData,200 );
+
+// printf("strTempData: %s\n",earthquake->strTempData);
+// printf("strData[noOfLines]:%s\n", earthquake->strData[earthquake->noOfLines]);
+// printf("%d\n", earthquake->noOfLines);
+
+        earthquake->noOfLines++;
+    }
+}
+
+// void swap(char *xp, char *yp)
+// {
+//     int temp = *xp;
+//     *xp = *yp;
+//     *yp = temp;	
+// }
+
+int bubble_sort(struct File *earthquake)
+{
+    //check for usual errors
+    if ( (earthquake->ptrFileLog = fopen(earthquake->strFileName, "r")) == NULL ) 
+    {
+    	Error_print(earthquake->strFileName);
+        return 1;
+    }
+    if ( (earthquake->ptrSummary = fopen(earthquake->strFileSummary, "a")) == NULL ) 
+    {
+		Error_print(earthquake->strFileSummary);        
+        return 1;
+    }    	
+	earthquake->ptrFileLog = fopen(earthquake->strFileName, "r");
+    // Read and store in a string list.
+	Store_temp_data(earthquake);	
+    int i, j;
+    // Sort the array.
+    for(i= 1; i < (earthquake->noOfLines); ++i) 
+    {    
+    	// printf("%s\n", earthquake->strData[i]);
 		int x;
-
-		char *latitude1;
-		char *latitude2;
-		char temp1[1024];
-		char temp2[1024];
-		char temp3[1024];			
-			
-		strcpy(temp1, strData[i]);
+		strcpy(earthquake->strDataCopy, earthquake->strData[i]);
 		
-		if (i < (noOfLines-1)){
+		if (i < (earthquake->noOfLines-1))
+		{
 			x=i+1;
-			strcpy(temp2, strData[x]);				
+			strcpy(earthquake->strDataPlus1, earthquake->strData[x]);				
 		} 
-
-		latitude1 = strtok (temp1,",");
-
+		earthquake->latitude1 = strtok (earthquake->strDataCopy,",");
+		// why is this loop used? Ans: to get latitude 
 		for (int i = 1; i < 2; ++i)
-			latitude1 = strtok (NULL, ",");
+			earthquake->latitude1 = strtok (NULL, ",");
 
-		// printf ("latitude 1 is %s\n",latitude1);
-
-		latitude2 = strtok (temp2,",");
+		// printf ("latitude 1 is %s\n",earthquake->latitude1);
+		earthquake->latitude2 = strtok (earthquake->strDataPlus1,",");
 		
+		// why is this loop used? Ans: to get latitude		
 		for (int i = 1; i < 2; ++i)
-			latitude2 = strtok (NULL, ",");
+			earthquake->latitude2 = strtok (NULL, ",");
 
-		// printf ("latitude 2 is %s\n",latitude2);		
-        for(j = 1; j < ( noOfLines - 1); ++j) {
-
-    		if(latitude2 != NULL){        
-
-	            if(strcmp(latitude1, latitude2) > 0) {
-		            	char *swap[1024];
-
-						strcpy(swap, strData[j]);
-						strcpy(temp3,strData[j+1]);		        
-
-		                strcpy(*(strData+j), temp3);
-
-		                	strcpy(*(strData+(j+1)), swap);		                
-							// printf ("contents in current row being processed: %s\n",*(strData+j+1));
-	            }
-
-	     //        if(strcmp(latitude1, latitude2) < 0) {
-	     //        	if(i < (noOfLines)){
-		    //         	char *swap;
-		    //         	swap = temp1;
-		    //         	int index = i+1;
-		    //         	//strcpy copies the stirng pointed to by the pointer in second argument
-		    //             strcpy(swap, temp1);
-						// // printf ("latitude 2 is %s\n",*(strData+i));
-		    //             strcpy(*(strData+i), temp2);
-		    //             // strcpy(*(strData+index), swap);		                
-		    //         }
-	     //        }	            
+		char temp3[1024];			
+		// printf ("latitude 2 is %s\n",earthquake->latitude2);		
+        for(j = 1; j < ( earthquake->noOfLines - 1); ++j) 
+        {
+    		if(earthquake->latitude2 != NULL) 
+    		{        
+				// if  > 0,  latitude1 > latitude2.
+	            if(strcmp(earthquake->latitude1, earthquake->latitude2) > 0) 
+	            {
+	            	// char *swap[1024];
+	            	// swap(earthquake->latitude1, earthquake->latitude2);
+					memcpy(temp3,earthquake->strData[j+1], 200);
+	            	memcpy(earthquake->strData[j+1], earthquake->strData[j], 200);      
+	                memcpy(earthquake->strData[j], temp3, 200);
+	            } 
+				// // if Return value < 0 then it indicates str1 is less than str2.
+	   //          if(strcmp(earthquake->latitude1, earthquake->latitude2) < 0) 
+	   //          {
+	   //          	continue;
+	   //          }	            
+				// // if Return value = 0 then it indicates str1 is equal to str2.	            
 	        }
         }
+// printf("value: %s\n", earthquake->latitude1);
     }
-
     // Write it to outfile. file.
-    for(i = 0; i < noOfLines; i++)
-        fprintf(ptrSummary,"%s\n",strData[i]);
+    for(i = 0; i < earthquake->noOfLines; i++)
+        fprintf(earthquake->ptrSummary,"%s\n",earthquake->strData[i]);
 
     // free each string
-    for(i = 0; i < noOfLines; i++)
-        free(strData[i]);
+    for(i = 0; i < earthquake->noOfLines; i++)
+        free(earthquake->strData[i]);
     // free string list.
-    free(strData);
-    fclose(ptrFileLog);
-    fclose(ptrSummary);
+    free(earthquake->strData);
+    fclose(earthquake->ptrFileLog);
+    fclose(earthquake->ptrSummary);
+    return 0;
+}
 
-	int pid = getpid();
-	printf("Parent process id is %d\n", pid);		
+void die(const char *message)
+{
+    if (errno) {
+        perror(message);
+    } else {
+        printf("ERROR: %s\n", message);
+    }
+
+    exit(1);
+}
+
+int main(int argc, char *argv[])
+{
+	// int x;
+    // char *strFileName = "./earthquake.csv";
+    if (argc < 1)
+        die("USAGE: ./osassignment <number of processes>");
+
+    char action = argv[1][0];
+    // char action = argv[2][0];
 	pid_t child1,child2;
 
-	if(!(child1 = fork())){
-		// first child
-		int pid = getpid();
+    switch (action) 
+    {
+        case '1':
+        	{
+				// int pid = getpid();
+			    struct File *earthquake = File_create("./earthquake_test.csv","./earthquake_out.csv");
+				bubble_sort(earthquake);
 
-		// only child process executes this
+				printf("Parent process id is %d\n", getpid());		
+			
+	        
+	            break;
+        	}
 
-		printf("Child1 process id is %d\n", pid);
- 		
-        exit(0);
-	} else if (!(child2= fork())){
-		// second child		
-		int pid = getpid();
-		// only child2 executes this
-		printf("Child2 process id is %d\n", pid);
-        exit(0);		
-	}
+        case '2':
+			if(!(child1 = fork())){
+				// first child
+				int pid = getpid();
+
+				// only child process executes this
+
+				printf("Child1 process id is %d\n", pid);
+		 		
+		        exit(0);
+			} 
+			else if (!(child2= fork())){
+				// second child		
+				int pid = getpid();
+				// only child2 executes this
+				printf("Child2 process id is %d\n", pid);
+		        exit(0);		
+			}
+            break;
+
+        case '4':
+
+            break;
+
+        // case '10': 
+
+        //     break;
+        default:
+        	printf("%c\n", action);
+            die("Invalid action: 1=1 processs, 2=2 processs, 4=4 processs, 10=10 processs");
+    }    
+
+
+
+
     return 0;	
 }

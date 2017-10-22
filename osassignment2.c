@@ -24,7 +24,7 @@ CSE 3320-001 Operating Systems
 #include <stdlib.h>
 #include <errno.h>
 
-#define MAX_LEN 300 // Length of each line in input file.
+#define MAX_LEN 10000 // Length of each line in input file.
 
 struct File
 {
@@ -40,8 +40,11 @@ struct File
 
 	char *latitude1;
 	char *latitude2;
-	char strDataCopy[1024];
-	char strDataPlus1[1024];
+	char strDataCopy[10000];
+	char strDataPlus1[10000];
+	// int count;
+
+	// char data[count][2];
 	// char **temp3;			    
 };
 
@@ -56,6 +59,7 @@ struct File *File_create(char *strFileName, char *strFileSummary)
     earthquake->ptrFileLog = NULL;
     earthquake->ptrSummary = NULL;
 
+    // earthquake->count = countlines(earthquake->strFileName);
 	// char **temp3[1024];
 
     earthquake->noOfLines = 0;	
@@ -103,14 +107,12 @@ void Store_temp_data(struct File *earthquake)
     int count;
 
 	// printf("variable value : %s \n", earthquake->strFileName);
-
     count = countlines(earthquake->strFileName);
 	// for (int i = 0; i < count; ++i)
 	// {
     while((fgets(earthquake->strTempData, MAX_LEN, earthquake->ptrFileLog) != NULL) && earthquake->noOfLines < count) 
     {	 
 	    // Remove the trailing newline character
-
         if(strchr(earthquake->strTempData,'\n'))
             earthquake->strTempData[strlen(earthquake->strTempData)-1] = '\0';
 
@@ -118,13 +120,12 @@ void Store_temp_data(struct File *earthquake)
         // earthquake->strData = malloc(sizeof(char**)*(earthquake->noOfLines+1));
         
         earthquake->strData[earthquake->noOfLines] = (char*)calloc(MAX_LEN,sizeof(char));
-        
         memcpy(earthquake->strData[earthquake->noOfLines], earthquake->strTempData,200 );
 
 // printf("strTempData: %s\n",earthquake->strTempData);
+// printf("strTempData: %s\n",earthquake->strData);        
 // printf("strData[noOfLines]:%s\n", earthquake->strData[earthquake->noOfLines]);
 // printf("%d\n", earthquake->noOfLines);
-
         earthquake->noOfLines++;
     }
 }
@@ -152,56 +153,59 @@ int bubble_sort(struct File *earthquake)
 	earthquake->ptrFileLog = fopen(earthquake->strFileName, "r");
     // Read and store in a string list.
 	Store_temp_data(earthquake);	
-    int i, j;
-    // Sort the array.
-    for(i= 1; i < (earthquake->noOfLines); ++i) 
+    
+    int i, j, x;
+        // Sort the array.
+    for(i= 0; i < (earthquake->noOfLines-1); i++) 
     {    
-    	// printf("%s\n", earthquake->strData[i]);
-		int x;
+		// make a copy of i th element of array containing the lines of csv files	
 		strcpy(earthquake->strDataCopy, earthquake->strData[i]);
-		
+		// make a copy of (i + 1)th element of array containing the lines of csv files		
 		if (i < (earthquake->noOfLines-1))
 		{
 			x=i+1;
 			strcpy(earthquake->strDataPlus1, earthquake->strData[x]);				
 		} 
+    	printf("%s\n", earthquake->strDataPlus1);    	
 		earthquake->latitude1 = strtok (earthquake->strDataCopy,",");
 		// why is this loop used? Ans: to get latitude 
 		for (int i = 1; i < 2; ++i)
 			earthquake->latitude1 = strtok (NULL, ",");
 
+    	// printf("%s\n", earthquake->strData[i]);
 		// printf ("latitude 1 is %s\n",earthquake->latitude1);
 		earthquake->latitude2 = strtok (earthquake->strDataPlus1,",");
 		
 		// why is this loop used? Ans: to get latitude		
-		for (int i = 1; i < 2; ++i)
+		for (int i = 1; i < 2; i++)
 			earthquake->latitude2 = strtok (NULL, ",");
 
-		char temp3[1024];			
 		// printf ("latitude 2 is %s\n",earthquake->latitude2);		
-        for(j = 1; j < ( earthquake->noOfLines - 1); ++j) 
+		char temp3[1024];			
+        for(j = 0; j < ( earthquake->noOfLines - i - 1); j++) 
         {
-    		if(earthquake->latitude2 != NULL) 
-    		{        
+    		// if(earthquake->latitude2 != NULL) 
+    		// {        
 				// if  > 0,  latitude1 > latitude2.
 	            if(strcmp(earthquake->latitude1, earthquake->latitude2) > 0) 
 	            {
-	            	// char *swap[1024];
-	            	// swap(earthquake->latitude1, earthquake->latitude2);
-					memcpy(temp3,earthquake->strData[j+1], 200);
-	            	memcpy(earthquake->strData[j+1], earthquake->strData[j], 200);      
-	                memcpy(earthquake->strData[j], temp3, 200);
-	            } 
-				// // if Return value < 0 then it indicates str1 is less than str2.
-	   //          if(strcmp(earthquake->latitude1, earthquake->latitude2) < 0) 
-	   //          {
-	   //          	continue;
-	   //          }	            
-				// // if Return value = 0 then it indicates str1 is equal to str2.	            
-	        }
+	            	// temp3[1][1] 	= data[j+1][0];
+	            	// data[j+1][0] 	= data[j][0];
+	            	// data[j][0]		= temp3[1][1];	
+					strcpy(temp3,earthquake->strData[j+1]);		        
+	                strcpy(*(earthquake->strData+(j+1)), *(earthquake->strData+j));
+                	strcpy(*(earthquake->strData+j), temp3);	                
+	            }             
+	        // }
         }
-// printf("value: %s\n", earthquake->latitude1);
     }
+
+	// for (int d = 0; d < count; ++d)
+	// {
+	// 	/* code */
+	// 	// printf ("latitude1: %c\n",(float)data[d][0]);
+
+	// }
     // Write it to outfile. file.
     for(i = 0; i < earthquake->noOfLines; i++)
         fprintf(earthquake->ptrSummary,"%s\n",earthquake->strData[i]);

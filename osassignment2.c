@@ -26,69 +26,54 @@ CSE 3320-001 Operating Systems
 
 #define MAX_LEN 10000 // Length of each line in input file.
 
-struct File
-{
-    char *strFileName;    
-    char *strFileSummary;
-    char strTempData[MAX_LEN]; 
-	char **strData; // String List	
+struct File{
+    char *FileName;    
+    char *FileSummary;
+    char TempData[MAX_LEN]; 
+	char **Data; // String List	
 
-    int noOfLines;
+    int Lines;
 
-    FILE * ptrFileLog;
-    FILE * ptrSummary;
+    FILE * FileLog;
+    FILE * Summary;
 
 	char *latitude1;
 	char *latitude2;
-	char strDataCopy[10000];
-	char strDataPlus1[10000];
-	// int count;
-
-	// char data[count][2];
-	// char **temp3;			    
+	char DataCopy[10000];
+	char DataPlus1[10000];		    
 };
 
-struct File *File_create(char *strFileName, char *strFileSummary)
-{
-	struct File *E = malloc(sizeof(struct File));
-
-	E->strFileName = strdup(strFileName);
-	E->strFileSummary = strdup(strFileSummary);
-	E->strData 	= NULL;
-	// E->strTempData[] = ;
-    E->ptrFileLog = NULL;
-    E->ptrSummary = NULL;
-
-    // E->count = countlines(E->strFileName);
+struct File *File_create(char *FileName, char *FileSummary){
+	struct File *E 	= malloc(sizeof(struct File));
+	E->FileName 	= strdup(FileName);
+	E->FileSummary 	= strdup(FileSummary);
+	E->Data 		= NULL;
+	// E->TempData[] = ;
+    E->FileLog 		= NULL;
+    E->Summary 		= NULL;
+    // E->count = countlines(E->FileName);
 	// char **temp3[1024];
-
-    E->noOfLines = 0;	
-
+    E->Lines 		= 0;	
 	return E;
 
 }
 
-void File_destory(struct File *E)
-{
+void File_destory(struct File *E){
 	assert(E != NULL);
-
 	// free(who->name);
 	free(E);
 }
 
-void Error_print(char * variableName)
-{
+void Error_print(char * variableName){
 	fprintf(stderr,"Error: Could not open %s\n",variableName);	
 }
 
-int countlines(char *filename)
-{
+int countlines(char *filename){
   // count the number of lines in the file called filename 
 	FILE *fp = fopen(filename,"r");
 	int ch=0;
 	int lines=0;
 	// printf("variable value : %c \n", filename);
-
 	if (fp == NULL)
 		return 0;
 
@@ -102,99 +87,81 @@ int countlines(char *filename)
 	return lines;
 }
 
-void Store_temp_data(struct File *E)
-{
+void Store_temp_data(struct File *E){
     int count;
+	// printf("variable value : %s \n", E->FileName);
+    count = countlines(E->FileName);
 
-	// printf("variable value : %s \n", E->strFileName);
-    count = countlines(E->strFileName);
-	// for (int i = 0; i < count; ++i)
-	// {
-    while((fgets(E->strTempData, MAX_LEN, E->ptrFileLog) != NULL) && E->noOfLines < count) 
-    {	 
+    while((fgets(E->TempData, MAX_LEN, E->FileLog) != NULL) && E->Lines < count) {	 
 	    // Remove the trailing newline character
-        if(strchr(E->strTempData,'\n'))
-            E->strTempData[strlen(E->strTempData)-1] = '\0';
-
-        E->strData = (char**) realloc(E->strData, sizeof(char**)*(E->noOfLines+1));
-        // E->strData = malloc(sizeof(char**)*(E->noOfLines+1));
-        
-        E->strData[E->noOfLines] = (char*)calloc(MAX_LEN,sizeof(char));
-        memcpy(E->strData[E->noOfLines], E->strTempData,200 );
-
-// printf("strTempData: %s\n",E->strTempData);
-// printf("strTempData: %s\n",E->strData);        
-// printf("strData[noOfLines]:%s\n", E->strData[E->noOfLines]);
-// printf("%d\n", E->noOfLines);
-        E->noOfLines++;
+        if(strchr(E->TempData,'\n')){
+            E->TempData[strlen(E->TempData)-1] = '\0';
+        }
+        E->Data = (char**) realloc(E->Data, sizeof(char**)*(E->Lines+1));
+        // E->Data = malloc(sizeof(char**)*(E->Lines+1));
+        E->Data[E->Lines] = (char*)calloc(MAX_LEN,sizeof(char));
+        memcpy(E->Data[E->Lines], E->TempData,200 );
+// printf("TempData: %s\n",E->TempData);
+// printf("TempData: %s\n",E->Data);        
+// printf("Data[Lines]:%s\n", E->Data[E->Lines]);
+// printf("%d\n", E->Lines);
+        E->Lines++;
     }
 }
 
-// void swap(char *xp, char *yp)
-// {
-//     int temp = *xp;
-//     *xp = *yp;
-//     *yp = temp;	
-// }
-
-int bubble_sort(struct File *E)
-{
+int bubble_sort(struct File *E){
     //check for usual errors
-    if ( (E->ptrFileLog = fopen(E->strFileName, "r")) == NULL ) 
-    {
-    	Error_print(E->strFileName);
+    if ( (E->FileLog = fopen(E->FileName, "r")) == NULL ){
+    	Error_print(E->FileName);
         return 1;
     }
-    if ( (E->ptrSummary = fopen(E->strFileSummary, "a")) == NULL ) 
-    {
-		Error_print(E->strFileSummary);        
+    if ( (E->Summary = fopen(E->FileSummary, "a")) == NULL ){
+		Error_print(E->FileSummary);        
         return 1;
     }    	
-	E->ptrFileLog = fopen(E->strFileName, "r");
+	E->FileLog = fopen(E->FileName, "r");
     // Read and store in a string list.
 	Store_temp_data(E);	
     
     int i, j, x;
         // Sort the array.
-    for(i= 0; i < (E->noOfLines-1); i++) 
-    {    
+    for(i= 0; i < (E->Lines-1); i++) {    
 		// make a copy of i th element of array containing the lines of csv files	
-		strcpy(E->strDataCopy, E->strData[i]);
+		strcpy(E->DataCopy, E->Data[i]);
 		// make a copy of (i + 1)th element of array containing the lines of csv files		
-		if (i < (E->noOfLines-1))
-		{
+		if (i < (E->Lines-1)){
 			x=i+1;
-			strcpy(E->strDataPlus1, E->strData[x]);				
+			strcpy(E->DataPlus1, E->Data[x]);				
 		} 
-    	printf("%s\n", E->strDataPlus1);    	
-		E->latitude1 = strtok (E->strDataCopy,",");
+    	printf("%s\n", E->DataPlus1);    	
+		E->latitude1 = strtok (E->DataCopy,",");
 		// why is this loop used? Ans: to get latitude 
-		for (int i = 1; i < 2; ++i)
+		for (int i = 1; i < 2; ++i){
 			E->latitude1 = strtok (NULL, ",");
+		}
 
-    	// printf("%s\n", E->strData[i]);
+    	// printf("%s\n", E->Data[i]);
 		// printf ("latitude 1 is %s\n",E->latitude1);
-		E->latitude2 = strtok (E->strDataPlus1,",");
+		E->latitude2 = strtok (E->DataPlus1,",");
 		
 		// why is this loop used? Ans: to get latitude		
-		for (int i = 1; i < 2; i++)
+		for (int i = 1; i < 2; i++){
 			E->latitude2 = strtok (NULL, ",");
+		}
 
 		// printf ("latitude 2 is %s\n",E->latitude2);		
 		char temp3[1024];			
-        for(j = 0; j < ( E->noOfLines - i - 1); j++) 
-        {
+        for(j = 0; j < ( E->Lines - i - 1); j++){
     		// if(E->latitude2 != NULL) 
     		// {        
 				// if  > 0,  latitude1 > latitude2.
-	            if(strcmp(E->latitude1, E->latitude2) > 0) 
-	            {
+	            if(strcmp(E->latitude1, E->latitude2) > 0) {
 	            	// temp3[1][1] 	= data[j+1][0];
 	            	// data[j+1][0] 	= data[j][0];
 	            	// data[j][0]		= temp3[1][1];	
-					strcpy(temp3,E->strData[j+1]);		        
-	                strcpy(*(E->strData+(j+1)), *(E->strData+j));
-                	strcpy(*(E->strData+j), temp3);	                
+					strcpy(temp3,E->Data[j+1]);		        
+	                strcpy(*(E->Data+(j+1)), *(E->Data+j));
+                	strcpy(*(E->Data+j), temp3);	                
 	            }             
 	        // }
         }
@@ -207,21 +174,22 @@ int bubble_sort(struct File *E)
 
 	// }
     // Write it to outfile. file.
-    for(i = 0; i < E->noOfLines; i++)
-        fprintf(E->ptrSummary,"%s\n",E->strData[i]);
+    for(i = 0; i < E->Lines; i++){
+        fprintf(E->Summary,"%s\n",E->Data[i]);
+    }
 
     // free each string
-    for(i = 0; i < E->noOfLines; i++)
-        free(E->strData[i]);
+    for(i = 0; i < E->Lines; i++){
+        free(E->Data[i]);
+    }
     // free string list.
-    free(E->strData);
-    fclose(E->ptrFileLog);
-    fclose(E->ptrSummary);
+    free(E->Data);
+    fclose(E->FileLog);
+    fclose(E->Summary);
     return 0;
 }
 
-void die(const char *message)
-{
+void die(const char *message){
     if (errno) {
         perror(message);
     } else {
@@ -231,10 +199,9 @@ void die(const char *message)
     exit(1);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
 	// int x;
-    // char *strFileName = "./E.csv";
+    // char *FileName = "./E.csv";
     if (argc < 1)
         die("USAGE: ./osassignment <number of processes>");
 
@@ -242,8 +209,7 @@ int main(int argc, char *argv[])
     // char action = argv[2][0];
 	pid_t child1,child2;
 
-    switch (action) 
-    {
+    switch (action){
         case '1':
         	{
 				// int pid = getpid();
@@ -252,7 +218,6 @@ int main(int argc, char *argv[])
 
 				printf("Parent process id is %d\n", getpid());		
 			
-	        
 	            break;
         	}
 
@@ -260,9 +225,7 @@ int main(int argc, char *argv[])
 			if(!(child1 = fork())){
 				// first child
 				int pid = getpid();
-
 				// only child process executes this
-
 				printf("Child1 process id is %d\n", pid);
 		 		
 		        exit(0);
@@ -279,17 +242,11 @@ int main(int argc, char *argv[])
         case '4':
 
             break;
-
         // case '10': 
-
         //     break;
         default:
         	printf("%c\n", action);
             die("Invalid action: 1=1 processs, 2=2 processs, 4=4 processs, 10=10 processs");
     }    
-
-
-
-
     return 0;	
 }

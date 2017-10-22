@@ -23,6 +23,8 @@ CSE 3320-001 Operating Systems
 #include <assert.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <time.h>
+#include <pthread.h>
 
 #define MAX_LEN 10000 // Length of each line in input file.
 
@@ -55,7 +57,6 @@ struct File *File_create(char *FileName, char *FileSummary){
 	// char **temp3[1024];
     E->Lines 		= 0;	
 	return E;
-
 }
 
 void File_destory(struct File *E){
@@ -74,12 +75,11 @@ int countlines(char *filename){
 	int ch=0;
 	int lines=0;
 	// printf("variable value : %c \n", filename);
-	if (fp == NULL)
+	if (fp == NULL){
 		return 0;
-
+	}
 	lines++;
-	while ((ch = fgetc(fp)) != EOF)
-	{
+	while ((ch = fgetc(fp)) != EOF){
 	    if (ch == '\n')
 		lines++;
 	}
@@ -101,8 +101,7 @@ void Store_temp_data(struct File *E){
         // E->Data = malloc(sizeof(char**)*(E->Lines+1));
         E->Data[E->Lines] = (char*)calloc(MAX_LEN,sizeof(char));
         memcpy(E->Data[E->Lines], E->TempData,200 );
-// printf("TempData: %s\n",E->TempData);
-// printf("TempData: %s\n",E->Data);        
+// printf("TempData: %s\n",E->TempData);        
 // printf("Data[Lines]:%s\n", E->Data[E->Lines]);
 // printf("%d\n", E->Lines);
         E->Lines++;
@@ -133,22 +132,19 @@ int bubble_sort(struct File *E){
 			x=i+1;
 			strcpy(E->DataPlus1, E->Data[x]);				
 		} 
-    	printf("%s\n", E->DataPlus1);    	
+    	// printf("%s\n", E->DataPlus1);    	
 		E->latitude1 = strtok (E->DataCopy,",");
 		// why is this loop used? Ans: to get latitude 
 		for (int i = 1; i < 2; ++i){
 			E->latitude1 = strtok (NULL, ",");
 		}
-
     	// printf("%s\n", E->Data[i]);
 		// printf ("latitude 1 is %s\n",E->latitude1);
 		E->latitude2 = strtok (E->DataPlus1,",");
-		
 		// why is this loop used? Ans: to get latitude		
 		for (int i = 1; i < 2; i++){
 			E->latitude2 = strtok (NULL, ",");
 		}
-
 		// printf ("latitude 2 is %s\n",E->latitude2);		
 		char temp3[1024];			
         for(j = 0; j < ( E->Lines - i - 1); j++){
@@ -167,12 +163,6 @@ int bubble_sort(struct File *E){
         }
     }
 
-	// for (int d = 0; d < count; ++d)
-	// {
-	// 	/* code */
-	// 	// printf ("latitude1: %c\n",(float)data[d][0]);
-
-	// }
     // Write it to outfile. file.
     for(i = 0; i < E->Lines; i++){
         fprintf(E->Summary,"%s\n",E->Data[i]);
@@ -213,11 +203,14 @@ int main(int argc, char *argv[]){
         case '1':
         	{
 				// int pid = getpid();
-			    struct File *E = File_create("./earthquake_test.csv","./earthquake_out.csv");
-				bubble_sort(E);
+				clock_t begin = clock();
 
-				printf("Parent process id is %d\n", getpid());		
-			
+			    struct File *E = File_create("./earthquake.csv","./earthquake_out.csv");
+				bubble_sort(E);			
+				clock_t end = clock();
+				double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+				printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);		
+	        
 	            break;
         	}
 
@@ -225,7 +218,9 @@ int main(int argc, char *argv[]){
 			if(!(child1 = fork())){
 				// first child
 				int pid = getpid();
+
 				// only child process executes this
+
 				printf("Child1 process id is %d\n", pid);
 		 		
 		        exit(0);
@@ -248,5 +243,9 @@ int main(int argc, char *argv[]){
         	printf("%c\n", action);
             die("Invalid action: 1=1 processs, 2=2 processs, 4=4 processs, 10=10 processs");
     }    
+
+
+
+
     return 0;	
 }

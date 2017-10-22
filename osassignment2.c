@@ -50,30 +50,30 @@ struct File
 
 struct File *File_create(char *strFileName, char *strFileSummary)
 {
-	struct File *earthquake = malloc(sizeof(struct File));
+	struct File *E = malloc(sizeof(struct File));
 
-	earthquake->strFileName = strdup(strFileName);
-	earthquake->strFileSummary = strdup(strFileSummary);
-	earthquake->strData 	= NULL;
-	// earthquake->strTempData[] = ;
-    earthquake->ptrFileLog = NULL;
-    earthquake->ptrSummary = NULL;
+	E->strFileName = strdup(strFileName);
+	E->strFileSummary = strdup(strFileSummary);
+	E->strData 	= NULL;
+	// E->strTempData[] = ;
+    E->ptrFileLog = NULL;
+    E->ptrSummary = NULL;
 
-    // earthquake->count = countlines(earthquake->strFileName);
+    // E->count = countlines(E->strFileName);
 	// char **temp3[1024];
 
-    earthquake->noOfLines = 0;	
+    E->noOfLines = 0;	
 
-	return earthquake;
+	return E;
 
 }
 
-void File_destory(struct File *earthquake)
+void File_destory(struct File *E)
 {
-	assert(earthquake != NULL);
+	assert(E != NULL);
 
 	// free(who->name);
-	free(earthquake);
+	free(E);
 }
 
 void Error_print(char * variableName)
@@ -102,31 +102,31 @@ int countlines(char *filename)
 	return lines;
 }
 
-void Store_temp_data(struct File *earthquake)
+void Store_temp_data(struct File *E)
 {
     int count;
 
-	// printf("variable value : %s \n", earthquake->strFileName);
-    count = countlines(earthquake->strFileName);
+	// printf("variable value : %s \n", E->strFileName);
+    count = countlines(E->strFileName);
 	// for (int i = 0; i < count; ++i)
 	// {
-    while((fgets(earthquake->strTempData, MAX_LEN, earthquake->ptrFileLog) != NULL) && earthquake->noOfLines < count) 
+    while((fgets(E->strTempData, MAX_LEN, E->ptrFileLog) != NULL) && E->noOfLines < count) 
     {	 
 	    // Remove the trailing newline character
-        if(strchr(earthquake->strTempData,'\n'))
-            earthquake->strTempData[strlen(earthquake->strTempData)-1] = '\0';
+        if(strchr(E->strTempData,'\n'))
+            E->strTempData[strlen(E->strTempData)-1] = '\0';
 
-        earthquake->strData = (char**) realloc(earthquake->strData, sizeof(char**)*(earthquake->noOfLines+1));
-        // earthquake->strData = malloc(sizeof(char**)*(earthquake->noOfLines+1));
+        E->strData = (char**) realloc(E->strData, sizeof(char**)*(E->noOfLines+1));
+        // E->strData = malloc(sizeof(char**)*(E->noOfLines+1));
         
-        earthquake->strData[earthquake->noOfLines] = (char*)calloc(MAX_LEN,sizeof(char));
-        memcpy(earthquake->strData[earthquake->noOfLines], earthquake->strTempData,200 );
+        E->strData[E->noOfLines] = (char*)calloc(MAX_LEN,sizeof(char));
+        memcpy(E->strData[E->noOfLines], E->strTempData,200 );
 
-// printf("strTempData: %s\n",earthquake->strTempData);
-// printf("strTempData: %s\n",earthquake->strData);        
-// printf("strData[noOfLines]:%s\n", earthquake->strData[earthquake->noOfLines]);
-// printf("%d\n", earthquake->noOfLines);
-        earthquake->noOfLines++;
+// printf("strTempData: %s\n",E->strTempData);
+// printf("strTempData: %s\n",E->strData);        
+// printf("strData[noOfLines]:%s\n", E->strData[E->noOfLines]);
+// printf("%d\n", E->noOfLines);
+        E->noOfLines++;
     }
 }
 
@@ -137,64 +137,64 @@ void Store_temp_data(struct File *earthquake)
 //     *yp = temp;	
 // }
 
-int bubble_sort(struct File *earthquake)
+int bubble_sort(struct File *E)
 {
     //check for usual errors
-    if ( (earthquake->ptrFileLog = fopen(earthquake->strFileName, "r")) == NULL ) 
+    if ( (E->ptrFileLog = fopen(E->strFileName, "r")) == NULL ) 
     {
-    	Error_print(earthquake->strFileName);
+    	Error_print(E->strFileName);
         return 1;
     }
-    if ( (earthquake->ptrSummary = fopen(earthquake->strFileSummary, "a")) == NULL ) 
+    if ( (E->ptrSummary = fopen(E->strFileSummary, "a")) == NULL ) 
     {
-		Error_print(earthquake->strFileSummary);        
+		Error_print(E->strFileSummary);        
         return 1;
     }    	
-	earthquake->ptrFileLog = fopen(earthquake->strFileName, "r");
+	E->ptrFileLog = fopen(E->strFileName, "r");
     // Read and store in a string list.
-	Store_temp_data(earthquake);	
+	Store_temp_data(E);	
     
     int i, j, x;
         // Sort the array.
-    for(i= 0; i < (earthquake->noOfLines-1); i++) 
+    for(i= 0; i < (E->noOfLines-1); i++) 
     {    
 		// make a copy of i th element of array containing the lines of csv files	
-		strcpy(earthquake->strDataCopy, earthquake->strData[i]);
+		strcpy(E->strDataCopy, E->strData[i]);
 		// make a copy of (i + 1)th element of array containing the lines of csv files		
-		if (i < (earthquake->noOfLines-1))
+		if (i < (E->noOfLines-1))
 		{
 			x=i+1;
-			strcpy(earthquake->strDataPlus1, earthquake->strData[x]);				
+			strcpy(E->strDataPlus1, E->strData[x]);				
 		} 
-    	printf("%s\n", earthquake->strDataPlus1);    	
-		earthquake->latitude1 = strtok (earthquake->strDataCopy,",");
+    	printf("%s\n", E->strDataPlus1);    	
+		E->latitude1 = strtok (E->strDataCopy,",");
 		// why is this loop used? Ans: to get latitude 
 		for (int i = 1; i < 2; ++i)
-			earthquake->latitude1 = strtok (NULL, ",");
+			E->latitude1 = strtok (NULL, ",");
 
-    	// printf("%s\n", earthquake->strData[i]);
-		// printf ("latitude 1 is %s\n",earthquake->latitude1);
-		earthquake->latitude2 = strtok (earthquake->strDataPlus1,",");
+    	// printf("%s\n", E->strData[i]);
+		// printf ("latitude 1 is %s\n",E->latitude1);
+		E->latitude2 = strtok (E->strDataPlus1,",");
 		
 		// why is this loop used? Ans: to get latitude		
 		for (int i = 1; i < 2; i++)
-			earthquake->latitude2 = strtok (NULL, ",");
+			E->latitude2 = strtok (NULL, ",");
 
-		// printf ("latitude 2 is %s\n",earthquake->latitude2);		
+		// printf ("latitude 2 is %s\n",E->latitude2);		
 		char temp3[1024];			
-        for(j = 0; j < ( earthquake->noOfLines - i - 1); j++) 
+        for(j = 0; j < ( E->noOfLines - i - 1); j++) 
         {
-    		// if(earthquake->latitude2 != NULL) 
+    		// if(E->latitude2 != NULL) 
     		// {        
 				// if  > 0,  latitude1 > latitude2.
-	            if(strcmp(earthquake->latitude1, earthquake->latitude2) > 0) 
+	            if(strcmp(E->latitude1, E->latitude2) > 0) 
 	            {
 	            	// temp3[1][1] 	= data[j+1][0];
 	            	// data[j+1][0] 	= data[j][0];
 	            	// data[j][0]		= temp3[1][1];	
-					strcpy(temp3,earthquake->strData[j+1]);		        
-	                strcpy(*(earthquake->strData+(j+1)), *(earthquake->strData+j));
-                	strcpy(*(earthquake->strData+j), temp3);	                
+					strcpy(temp3,E->strData[j+1]);		        
+	                strcpy(*(E->strData+(j+1)), *(E->strData+j));
+                	strcpy(*(E->strData+j), temp3);	                
 	            }             
 	        // }
         }
@@ -207,16 +207,16 @@ int bubble_sort(struct File *earthquake)
 
 	// }
     // Write it to outfile. file.
-    for(i = 0; i < earthquake->noOfLines; i++)
-        fprintf(earthquake->ptrSummary,"%s\n",earthquake->strData[i]);
+    for(i = 0; i < E->noOfLines; i++)
+        fprintf(E->ptrSummary,"%s\n",E->strData[i]);
 
     // free each string
-    for(i = 0; i < earthquake->noOfLines; i++)
-        free(earthquake->strData[i]);
+    for(i = 0; i < E->noOfLines; i++)
+        free(E->strData[i]);
     // free string list.
-    free(earthquake->strData);
-    fclose(earthquake->ptrFileLog);
-    fclose(earthquake->ptrSummary);
+    free(E->strData);
+    fclose(E->ptrFileLog);
+    fclose(E->ptrSummary);
     return 0;
 }
 
@@ -234,7 +234,7 @@ void die(const char *message)
 int main(int argc, char *argv[])
 {
 	// int x;
-    // char *strFileName = "./earthquake.csv";
+    // char *strFileName = "./E.csv";
     if (argc < 1)
         die("USAGE: ./osassignment <number of processes>");
 
@@ -247,8 +247,8 @@ int main(int argc, char *argv[])
         case '1':
         	{
 				// int pid = getpid();
-			    struct File *earthquake = File_create("./earthquake_test.csv","./earthquake_out.csv");
-				bubble_sort(earthquake);
+			    struct File *E = File_create("./earthquake_test.csv","./earthquake_out.csv");
+				bubble_sort(E);
 
 				printf("Parent process id is %d\n", getpid());		
 			

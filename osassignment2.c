@@ -124,7 +124,9 @@ int bubble_sort(struct File *E){
 
 	int i, j, x;
         // Sort the array.
-	for(i= 0; i < (E->Lines-1); i++) {    
+	for(i= 0; 
+		i < (E->Lines-1); 
+		i++) {    
 		// make a copy of i th element of array containing the lines of csv files	
 		strcpy(E->DataCopy, E->Data[i]);
 		// make a copy of (i + 1)th element of array containing the lines of csv files		
@@ -135,7 +137,9 @@ int bubble_sort(struct File *E){
     	// printf("%s\n", E->DataPlus1);    	
 		E->latitude1 = strtok (E->DataCopy,",");
 		// why is this loop used? Ans: to get latitude 
-		for (int i = 1; i < 2; ++i){
+		for (int i = 1; 
+			i < 2; 
+			++i){
 			E->latitude1 = strtok (NULL, ",");
 		}
     	// printf("%s\n", E->Data[i]);
@@ -147,7 +151,9 @@ int bubble_sort(struct File *E){
 		}
 		// printf ("latitude 2 is %s\n",E->latitude2);		
 		char temp3[1024];			
-		for(j = 0; j < ( E->Lines - i - 1); j++){
+		for(j = 0; 
+			j < ( E->Lines - i - 1); 
+			j++){
     		// if(E->latitude2 != NULL) 
     		// {        
 				// if  > 0,  latitude1 > latitude2.
@@ -164,12 +170,16 @@ int bubble_sort(struct File *E){
 	}
 
     // Write it to outfile. file.
-	for(i = 0; i < E->Lines; i++){
+	for(i = 0; 
+		i < E->Lines; 
+		i++){
 		fprintf(E->Summary,"%s\n",E->Data[i]);
 	}
 
     // free each string
-	for(i = 0; i < E->Lines; i++){
+	for(i = 0; 
+		i < E->Lines; 
+		i++){
 		free(E->Data[i]);
 	}
     // free string list.

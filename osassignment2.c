@@ -207,7 +207,7 @@ int main(int argc, char *argv[]){
 
 	char action = argv[1][0];
     // char action = argv[2][0];
-	pid_t child1,child2;
+	pid_t child1,child2,pid;
 
 	switch (action){
 		case '1':
@@ -225,29 +225,54 @@ int main(int argc, char *argv[]){
 		}
 
 		case '2':
+		{
+			clock_t begin = clock();
+	/*		split the file with exec_()function , pass the names of file aa and file bb to each process respectively*/
+			if ((pid = fork()) < 0 ) {
+			           /* Fork system call failed */
+			           perror("fork"), exit(1);
+			}else if (pid == 0) {
+			           /* Child only, pid is 0 */
+						// first child
+						int pid = getpid();
 
-/*		split the file with exec_()function , pass the names of file aa and file bb to each process respectively*/
+						// only child process executes this
 
-		if(!(child1 = fork())){
-				// first child
-			int pid = getpid();
+						printf("Child1 process id is %d\n", pid);
 
-				// only child process executes this
+						exit(0);
+			           // return 0;
+			}else {
+			           /* Parent only , pid is child's process ID */
+				printf("Parent process id is %d\n", getpid());				
+				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);			
+			}
 
-			printf("Child1 process id is %d\n", pid);
+			if ((pid = fork()) < 0 ) {
+			           /* Fork system call failed */
+			           perror("fork"), exit(1);
+			}else if (pid == 0) {
+			           /* Child only, pid is 0 */
+							// second child		
+						int pid = getpid();
+							// only child2 executes this
+						printf("Child2 process id is %d\n", pid);
+						exit(0);		
+			           return 0;
+			}else {
+			           /* Parent only , pid is child's process ID */
+				printf("Parent process id is %d\n", getpid());								
+				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);
+			}
+			clock_t end = clock();			
 
-			exit(0);
-		} 
-		else if (!(child2= fork())){
-				// second child		
-			int pid = getpid();
-				// only child2 executes this
-			printf("Child2 process id is %d\n", pid);
-			exit(0);		
+			break;
 		}
-		break;
 
 		case '4':
+		{
+
+		}
 
 		break;
         // case '10': 

@@ -39,7 +39,7 @@ struct File{
 	char DataPlus1[10000];		    
 };
 
-struct File *File_create(char *FileName, char *FileSummary){
+struct File *File_create(const char *FileName, const char *FileSummary){
 	struct File *E 	= (struct File*)malloc(sizeof(struct File));
 	E->FileName 	= strdup(FileName);
 	E->FileSummary 	= strdup(FileSummary);
@@ -198,12 +198,16 @@ int main(int argc, char const *argv[])
 {
 	clock_t begin = clock();
 	// printf("welcome to the world of fork and exec by sid \n");
-	printf("CSV input  file name is : %s\n", argv[0]);
-	printf("CSV output file name is : %s\n", argv[1]);
+	const char * inputFile = argv[0];
+	const char * outputFile= argv[1];
+	printf("CSV input  file name is : %s\n", inputFile);
+	printf("CSV output file name is : %s\n", outputFile);
+	
 	printf("start time is : %f\n", argv[2]);
 
-	struct File *E1 = File_create("./earthquake.csv","./earthquake_1.csv");
+	struct File *E1 = File_create(inputFile,outputFile);
 	bubble_sort(E1);	
+
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 	printf("time_spent is %f seconds ", getpid(),time_spent);						

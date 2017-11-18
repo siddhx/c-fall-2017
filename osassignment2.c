@@ -36,6 +36,32 @@ void die(const char *message){
 	exit(1);
 }
 
+void create_process(char *inputFile, char *outputFile, clock_t begin){
+	pid_t pid;	
+	if ((pid = fork()) < 0 ) {
+	           /* Fork system call failed */
+	           perror("fork"), exit(1);
+	}else if (pid == 0) {
+	           /* Child only, pid is 0 */
+				// first child
+
+				char *execFilename = "./EXEC";
+		        char *args[4]={inputFile,outputFile,begin, NULL};
+		        // execvp(args[0],args);
+				execve(execFilename, args);
+								
+				int pid = getpid();
+
+				printf("Child1 process id is %d\n", pid);
+
+				exit(0);
+	           // return 0;
+	}else {
+	           /* Parent only , pid is child's process ID */
+		printf("Parent process id is %d\n", getpid());				
+		// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);			
+	}	
+}
 int main(int argc, char *argv[]){
 	// int x;
     // char *FileName = "./E.csv";
@@ -69,53 +95,8 @@ int main(int argc, char *argv[]){
 		case '2':
 		{
 			clock_t begin = clock();
-
-			if ((pid = fork()) < 0 ) {
-			           /* Fork system call failed */
-			           perror("fork"), exit(1);
-			}else if (pid == 0) {
-			           /* Child only, pid is 0 */
-						// first child
-
-						char *execFilename = "./EXEC";
-				        char *args[4]={"earthquake2processaa","./earthquake_1out.csv",begin, NULL};
-				        // execvp(args[0],args);
-						execve(execFilename, args);
-										
-						int pid = getpid();
-
-						printf("Child1 process id is %d\n", pid);
-
-						exit(0);
-			           // return 0;
-			}else {
-			           /* Parent only , pid is child's process ID */
-				printf("Parent process id is %d\n", getpid());				
-				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);			
-			}
-
-			if ((pid = fork()) < 0 ) {
-			           /* Fork system call failed */
-			           perror("fork"), exit(1);
-			}else if (pid == 0) {
-			           /* Child only, pid is 0 */
-							// second child
-
-						char *execFilename = "./EXEC";
-				        char *args[4]={"earthquake2processab","./earthquake_2out.csv",begin, NULL};
-
-						execve(execFilename, args);
-
-						int pid = getpid();
-							// only child2 executes this
-						printf("Child2 process id is %d\n", pid);
-						exit(0);		
-			           // return 0;
-			}else {
-			           /* Parent only , pid is child's process ID */
-				printf("Parent process id is %d\n", getpid());								
-				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);
-			}
+			create_process("earthquake2processaa", "./earthquake_1out.csv", begin);
+			create_process("earthquake2processab", "./earthquake_2out.csv", begin);			
 			clock_t end = clock();			
 
 			break;
@@ -124,122 +105,49 @@ int main(int argc, char *argv[]){
 		case '3':
 		{
 			pthread_t thread1;
+			pthread_t do_nothing_thread1;
 
-			// if (pthread_create(&thread1,NULL, bubble_sort,))
+			// if (pthread_create(&do_nothing_thread1, NULL, do_nothing, NULL))
 			// {
 			// 	perror("Error creating thread:");
 			// 	exit( EXIT_FAILURE);
 			// }
 
-			// if (pthread_join(thread1, NULL))
+			// if (pthread_join(do_nothing_thread1, NULL))
 			// {
-			// 	perror("problem with the pthread_join");
+			// 	perror("problem with pthread_join");
 			// }			
 		}
 		case '4':
 		{
 			clock_t begin = clock();
-
-			if ((pid = fork()) < 0 ) {
-			           /* Fork system call failed */
-			           perror("fork"), exit(1);
-			}else if (pid == 0) {
-			           /* Child only, pid is 0 */
-						// first child
-
-						char *execFilename = "./EXEC";
-				        char *args[4]={"earthquake4processaa","./earthquake_1out.csv",begin, NULL};
-				        // execvp(args[0],args);
-						execve(execFilename, args);
-										
-						int pid = getpid();
-
-						printf("Child1 process id is %d\n", pid);
-
-						exit(0);
-			           // return 0;
-			}else {
-			           /* Parent only , pid is child's process ID */
-				printf("Parent process id is %d\n", getpid());				
-				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);			
-			}
-
-			if ((pid = fork()) < 0 ) {
-			           /* Fork system call failed */
-			           perror("fork"), exit(1);
-			}else if (pid == 0) {
-			           /* Child only, pid is 0 */
-							// second child
-
-						char *execFilename = "./EXEC";
-				        char *args[4]={"earthquake4processab","./earthquake_2out.csv",begin, NULL};
-
-						execve(execFilename, args);
-
-						int pid = getpid();
-							// only child2 executes this
-						printf("Child2 process id is %d\n", pid);
-						exit(0);		
-			           // return 0;
-			}else {
-			           /* Parent only , pid is child's process ID */
-				printf("Parent process id is %d\n", getpid());								
-				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);
-			}
-						if ((pid = fork()) < 0 ) {
-			           /* Fork system call failed */
-			           perror("fork"), exit(1);
-			}else if (pid == 0) {
-			           /* Child only, pid is 0 */
-						// first child
-
-						char *execFilename = "./EXEC";
-				        char *args[4]={"earthquake4processac","./earthquake_3out.csv",begin, NULL};
-				        // execvp(args[0],args);
-						execve(execFilename, args);
-										
-						int pid = getpid();
-
-						printf("Child1 process id is %d\n", pid);
-
-						exit(0);
-			           // return 0;
-			}else {
-			           /* Parent only , pid is child's process ID */
-				printf("Parent process id is %d\n", getpid());				
-				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);			
-			}
-
-			if ((pid = fork()) < 0 ) {
-			           /* Fork system call failed */
-			           perror("fork"), exit(1);
-			}else if (pid == 0) {
-			           /* Child only, pid is 0 */
-							// second child
-
-						char *execFilename = "./EXEC";
-				        char *args[4]={"earthquake4processad","./earthquake_4out.csv",begin, NULL};
-
-						execve(execFilename, args);
-
-						int pid = getpid();
-							// only child2 executes this
-						printf("Child2 process id is %d\n", pid);
-						exit(0);		
-			           // return 0;
-			}else {
-			           /* Parent only , pid is child's process ID */
-				printf("Parent process id is %d\n", getpid());								
-				// printf("Parent process id is %d\n, time_spent is %f seconds ", getpid(),time_spent);
-			}
+			create_process("earthquake4processaa", "./earthquake_1out.csv", begin);
+			create_process("earthquake4processab", "./earthquake_2out.csv", begin);
+			create_process("earthquake4processac", "./earthquake_3out.csv", begin);
+			create_process("earthquake4processad", "./earthquake_4out.csv", begin);
 			clock_t end = clock();			
 
 			break;
 		}
 
 		break;
-        case '10': 
-            break;
+        case '9': 
+		{
+			clock_t begin = clock();
+			create_process("earthquake10processaa", "./earthquake_1out.csv", begin);
+			create_process("earthquake10processab", "./earthquake_2out.csv", begin);
+			create_process("earthquake10processac", "./earthquake_3out.csv", begin);
+			create_process("earthquake10processad", "./earthquake_4out.csv", begin);
+			create_process("earthquake10processae", "./earthquake_5out.csv", begin);
+			create_process("earthquake10processaf", "./earthquake_6out.csv", begin);
+			create_process("earthquake10processag", "./earthquake_7out.csv", begin);
+			create_process("earthquake10processah", "./earthquake_8out.csv", begin);			
+			create_process("earthquake10processai", "./earthquake_9out.csv", begin);
+			create_process("earthquake10processaj", "./earthquake_10out.csv", begin);						
+			clock_t end = clock();			
+
+			break;
+		}
 		default:
 		printf("%c\n", action);
 		die("Invalid action: 1=1 processs, 2=2 processs, 34=4 processs, 10=10 processs");
